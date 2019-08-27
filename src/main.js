@@ -123,7 +123,6 @@ function display(times) {
 }
 
 let displayTimespent = function() {
-    console.log("called");
 	let times = readTimes();
 	if(!times) {
 		return false;

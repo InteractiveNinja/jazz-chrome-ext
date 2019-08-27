@@ -540,7 +540,6 @@ function display(times) {
 }
 
 var displayTimespent = function displayTimespent() {
-  console.log("called");
   var times = readTimes();
 
   if (!times) {
