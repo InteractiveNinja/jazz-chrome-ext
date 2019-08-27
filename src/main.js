@@ -1,13 +1,15 @@
 const Time = require('./Time')
 const TimeCalculator = require('./TimeCalculator')
+const IntervalTimer = require('./IntervalTimer')
 const MINIMUM_BREAKTIME = "0:30"
 const WORKDAY = "8:12"
+let timerInterval;
 
 
 function displayTime(time, description) {
     return `<span style="flex: 1; text-align: right; padding: 0 2px; font-size: 30px;">`
     + time.toString()
-	+ "</span><span style='flex: 1; text-align: left; padding: 0 2px;'>"
+	+ "</span><span class='time-description'>"
 	+ description + "</span>";
 }
 
@@ -32,15 +34,15 @@ function readTimes() {
     let calculator = new TimeCalculator(MINIMUM_BREAKTIME, WORKDAY);
     return [
         {
-            text: "Time spent",
+            text: localStorage.getItem("text-0") || "Time spent",
             value: calculator.timeSpent(times)
         },
         {
-            text: "Time to go", 
+            text: localStorage.getItem("text-1") || "Time to go",
             value: calculator.timeToGo(times)
         },
         {
-            text: "Estimated go time", 
+            text: localStorage.getItem("text-2") || "Go Time", 
             value: calculator.goTime(times)
         }
     ]
@@ -61,6 +63,29 @@ function display(times) {
 		title.appendChild(document.createTextNode("Time stats"))
 
         wrapper.appendChild(title);
+
+        wrapper.ondblclick = (e) => {
+            let descElements = document.querySelectorAll(".time-description");
+            descElements.forEach(el => el.contentEditable = true);
+            timerInterval.pause()
+            let body = document.querySelector("body")
+            body.classList.add("is-paused")
+
+            window.addEventListener('keypress', (ev) => {
+                let key = ev.which || ev.keyCode;
+                if(key == 13) {
+                    body.classList.remove("is-paused")
+                    ev.preventDefault()
+
+                    for(let i = 0; i < descElements.length; i++) {
+                        localStorage.setItem("text-" + i, descElements[i].innerHTML);
+                        descElements[i].contentEditable = false;
+                    }
+                    
+                    timerInterval.resume()
+                }
+            })
+        };
         
         let element;
         for(let i = 0; i < times.length; i++) {
@@ -70,7 +95,12 @@ function display(times) {
             wrapper.appendChild(element);
         }
 
-		row.appendChild(wrapper);
+        let description = document.createElement("DIV");
+        description.style = "margin-top: .5rem; text-align: center; font-style: italic;"
+        description.appendChild(document.createTextNode("Double click to edit the texts, enter to save"))
+        wrapper.appendChild(description);
+
+        row.appendChild(wrapper);
 
 		document
 			.querySelector(".stempel-data")
@@ -93,7 +123,7 @@ function display(times) {
 }
 
 let displayTimespent = function() {
-
+    console.log("called");
 	let times = readTimes();
 	if(!times) {
 		return false;
@@ -106,12 +136,22 @@ let displayTimespent = function() {
 
 
 window.onload = function() {
-	let intervalTimer = window.setInterval(displayTimespent, 1000)
-    setTimeout(displayTimespent, 1000)
+    timerInterval = new IntervalTimer(displayTimespent, 1000)
     
     let style = document.createElement("style");
     style.type = "text/css";
     style.innerHTML = `
+    .is-paused .timing {
+        border: 2px dashed orange; 
+    }
+    .is-paused .time-description {
+        background: white;
+    }
+    .time-description {
+        flex: 1;
+        text-align: left;
+        padding: 0 2px;
+    }
     @-webkit-keyframes pulse {
         from {
             -webkit-transform: scale3d(1, 1, 1);

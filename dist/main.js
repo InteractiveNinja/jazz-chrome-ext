@@ -86,6 +86,54 @@
 /************************************************************************/
 /******/ ({
 
+/***/ "./src/IntervalTimer.js":
+/*!******************************!*\
+  !*** ./src/IntervalTimer.js ***!
+  \******************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var IntervalTimer =
+/*#__PURE__*/
+function () {
+  function IntervalTimer(callback, interval) {
+    _classCallCheck(this, IntervalTimer);
+
+    this.callback = callback;
+    this.interval = interval;
+    this.state = 0;
+    this.resume();
+  }
+
+  _createClass(IntervalTimer, [{
+    key: "pause",
+    value: function pause() {
+      if (this.state != 1) return;
+      window.clearInterval(this.timerId);
+      this.state = 0;
+    }
+  }, {
+    key: "resume",
+    value: function resume() {
+      if (this.state != 0) return;
+      this.state = 1;
+      this.timerId = window.setInterval(this.callback, this.interval);
+    }
+  }]);
+
+  return IntervalTimer;
+}();
+
+module.exports = IntervalTimer;
+
+/***/ }),
+
 /***/ "./src/Time.js":
 /*!*********************!*\
   !*** ./src/Time.js ***!
@@ -381,11 +429,14 @@ var Time = __webpack_require__(/*! ./Time */ "./src/Time.js");
 
 var TimeCalculator = __webpack_require__(/*! ./TimeCalculator */ "./src/TimeCalculator.js");
 
+var IntervalTimer = __webpack_require__(/*! ./IntervalTimer */ "./src/IntervalTimer.js");
+
 var MINIMUM_BREAKTIME = "0:30";
 var WORKDAY = "8:12";
+var timerInterval;
 
 function displayTime(time, description) {
-  return "<span style=\"flex: 1; text-align: right; padding: 0 2px; font-size: 30px;\">" + time.toString() + "</span><span style='flex: 1; text-align: left; padding: 0 2px;'>" + description + "</span>";
+  return "<span style=\"flex: 1; text-align: right; padding: 0 2px; font-size: 30px;\">" + time.toString() + "</span><span class='time-description'>" + description + "</span>";
 }
 
 function readTimes() {
@@ -405,13 +456,13 @@ function readTimes() {
 
   var calculator = new TimeCalculator(MINIMUM_BREAKTIME, WORKDAY);
   return [{
-    text: "Time spent",
+    text: localStorage.getItem("text-0") || "Time spent",
     value: calculator.timeSpent(times)
   }, {
-    text: "Time to go",
+    text: localStorage.getItem("text-1") || "Time to go",
     value: calculator.timeToGo(times)
   }, {
-    text: "Estimated go time",
+    text: localStorage.getItem("text-2") || "Go Time",
     value: calculator.goTime(times)
   }];
 }
@@ -430,6 +481,32 @@ function display(times) {
     title.style = "text-align: center; font-weight: bolder;";
     title.appendChild(document.createTextNode("Time stats"));
     wrapper.appendChild(title);
+
+    wrapper.ondblclick = function (e) {
+      var descElements = document.querySelectorAll(".time-description");
+      descElements.forEach(function (el) {
+        return el.contentEditable = true;
+      });
+      timerInterval.pause();
+      var body = document.querySelector("body");
+      body.classList.add("is-paused");
+      window.addEventListener('keypress', function (ev) {
+        var key = ev.which || ev.keyCode;
+
+        if (key == 13) {
+          body.classList.remove("is-paused");
+          ev.preventDefault();
+
+          for (var i = 0; i < descElements.length; i++) {
+            localStorage.setItem("text-" + i, descElements[i].innerHTML);
+            descElements[i].contentEditable = false;
+          }
+
+          timerInterval.resume();
+        }
+      });
+    };
+
     var element;
 
     for (var i = 0; i < times.length; i++) {
@@ -439,6 +516,10 @@ function display(times) {
       wrapper.appendChild(element);
     }
 
+    var description = document.createElement("DIV");
+    description.style = "margin-top: .5rem; text-align: center; font-style: italic;";
+    description.appendChild(document.createTextNode("Double click to edit the texts, enter to save"));
+    wrapper.appendChild(description);
     row.appendChild(wrapper);
     document.querySelector(".stempel-data").parentElement.insertBefore(wrapper, document.querySelector(".stempel-data"));
   }
@@ -459,6 +540,7 @@ function display(times) {
 }
 
 var displayTimespent = function displayTimespent() {
+  console.log("called");
   var times = readTimes();
 
   if (!times) {
@@ -469,11 +551,10 @@ var displayTimespent = function displayTimespent() {
 };
 
 window.onload = function () {
-  var intervalTimer = window.setInterval(displayTimespent, 1000);
-  setTimeout(displayTimespent, 1000);
+  timerInterval = new IntervalTimer(displayTimespent, 1000);
   var style = document.createElement("style");
   style.type = "text/css";
-  style.innerHTML = "\n    @-webkit-keyframes pulse {\n        from {\n            -webkit-transform: scale3d(1, 1, 1);\n            transform: scale3d(1, 1, 1);\n        }\n        \n        50% {\n            -webkit-transform: scale3d(1.05, 1.05, 1.05);\n            transform: scale3d(1.05, 1.05, 1.05);\n        }\n        \n        to {\n            -webkit-transform: scale3d(1, 1, 1);\n            transform: scale3d(1, 1, 1);\n        }\n    }\n    \n    @keyframes pulse {\n        from {\n            -webkit-transform: scale3d(1, 1, 1);\n            transform: scale3d(1, 1, 1);\n        }\n        \n        50% {\n            -webkit-transform: scale3d(1.05, 1.05, 1.05);\n            transform: scale3d(1.05, 1.05, 1.05);\n        }\n        \n        to {\n            -webkit-transform: scale3d(1, 1, 1);\n            transform: scale3d(1, 1, 1);\n        }\n    }\n    \n    .pulse {\n    -webkit-animation-name: pulse;\n    animation-name: pulse;\n    animation-iteration-count: infinite;\n    -webkit-animation-duration: 3s;\n    animation-duration: 3s;\n    -webkit-animation-fill-mode: both;\n    animation-fill-mode: both;\n    border: 3px solid #84b2a6;\n\n    }";
+  style.innerHTML = "\n    .is-paused .timing {\n        border: 2px dashed orange; \n    }\n    .is-paused .time-description {\n        background: white;\n    }\n    .time-description {\n        flex: 1;\n        text-align: left;\n        padding: 0 2px;\n    }\n    @-webkit-keyframes pulse {\n        from {\n            -webkit-transform: scale3d(1, 1, 1);\n            transform: scale3d(1, 1, 1);\n        }\n        \n        50% {\n            -webkit-transform: scale3d(1.05, 1.05, 1.05);\n            transform: scale3d(1.05, 1.05, 1.05);\n        }\n        \n        to {\n            -webkit-transform: scale3d(1, 1, 1);\n            transform: scale3d(1, 1, 1);\n        }\n    }\n    \n    @keyframes pulse {\n        from {\n            -webkit-transform: scale3d(1, 1, 1);\n            transform: scale3d(1, 1, 1);\n        }\n        \n        50% {\n            -webkit-transform: scale3d(1.05, 1.05, 1.05);\n            transform: scale3d(1.05, 1.05, 1.05);\n        }\n        \n        to {\n            -webkit-transform: scale3d(1, 1, 1);\n            transform: scale3d(1, 1, 1);\n        }\n    }\n    \n    .pulse {\n    -webkit-animation-name: pulse;\n    animation-name: pulse;\n    animation-iteration-count: infinite;\n    -webkit-animation-duration: 3s;\n    animation-duration: 3s;\n    -webkit-animation-fill-mode: both;\n    animation-fill-mode: both;\n    border: 3px solid #84b2a6;\n\n    }";
   document.head.append(style);
 };
 
