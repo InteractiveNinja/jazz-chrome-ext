@@ -35,14 +35,17 @@ function readTimes() {
     return [
         {
             text: localStorage.getItem("text-0") || "Time spent",
+            default: "Time spent",
             value: calculator.timeSpent(times)
         },
         {
             text: localStorage.getItem("text-1") || "Time to go",
+            default: "Time to go",
             value: calculator.timeToGo(times)
         },
         {
             text: localStorage.getItem("text-2") || "Go Time", 
+            default: "Go Time",
             value: calculator.goTime(times)
         }
     ]
@@ -74,6 +77,7 @@ function display(times) {
             window.addEventListener('keypress', (ev) => {
                 let key = ev.which || ev.keyCode;
                 if(key == 13) {
+                    body.classList.add("custom-text")
                     body.classList.remove("is-paused")
                     ev.preventDefault()
 
@@ -96,6 +100,7 @@ function display(times) {
         }
 
         let description = document.createElement("DIV");
+        description.classList.add("timing-help-text")
         description.style = "margin-top: .5rem; text-align: center; font-style: italic;"
         description.appendChild(document.createTextNode("Double click to edit the texts, enter to save"))
         wrapper.appendChild(description);
@@ -109,16 +114,24 @@ function display(times) {
     }
 
     let isOvertime = false;
+    let hasCustomText = false;
     
     for(let i = 0; i < times.length; i++) {
         if(times[i].value.isNegative) {
             isOvertime = true;
         }
+        if(localStorage.getItem("text-" + i) != null) {
+            hasCustomText = true;
+        }
         document.querySelector(".time-" + i).innerHTML = displayTime(times[i].value, times[i].text);
+    }
+
+    if(hasCustomText) {
+        document.querySelector('body').classList.add("custom-text")
     }
     
     if(isOvertime) {
-        document.querySelector('.timing').classList = "timing pulse";
+        document.querySelector('.timing').classList.add("pulse");
     }
 }
 
@@ -150,6 +163,9 @@ window.onload = function() {
         flex: 1;
         text-align: left;
         padding: 0 2px;
+    }
+    .custom-text .timing-help-text {
+        display:none;
     }
     @-webkit-keyframes pulse {
         from {

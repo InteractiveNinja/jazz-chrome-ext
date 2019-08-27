@@ -457,12 +457,15 @@ function readTimes() {
   var calculator = new TimeCalculator(MINIMUM_BREAKTIME, WORKDAY);
   return [{
     text: localStorage.getItem("text-0") || "Time spent",
+    "default": "Time spent",
     value: calculator.timeSpent(times)
   }, {
     text: localStorage.getItem("text-1") || "Time to go",
+    "default": "Time to go",
     value: calculator.timeToGo(times)
   }, {
     text: localStorage.getItem("text-2") || "Go Time",
+    "default": "Go Time",
     value: calculator.goTime(times)
   }];
 }
@@ -494,6 +497,7 @@ function display(times) {
         var key = ev.which || ev.keyCode;
 
         if (key == 13) {
+          body.classList.add("custom-text");
           body.classList.remove("is-paused");
           ev.preventDefault();
 
@@ -517,6 +521,7 @@ function display(times) {
     }
 
     var description = document.createElement("DIV");
+    description.classList.add("timing-help-text");
     description.style = "margin-top: .5rem; text-align: center; font-style: italic;";
     description.appendChild(document.createTextNode("Double click to edit the texts, enter to save"));
     wrapper.appendChild(description);
@@ -525,17 +530,26 @@ function display(times) {
   }
 
   var isOvertime = false;
+  var hasCustomText = false;
 
   for (var _i = 0; _i < times.length; _i++) {
     if (times[_i].value.isNegative) {
       isOvertime = true;
     }
 
+    if (localStorage.getItem("text-" + _i) != null) {
+      hasCustomText = true;
+    }
+
     document.querySelector(".time-" + _i).innerHTML = displayTime(times[_i].value, times[_i].text);
   }
 
+  if (hasCustomText) {
+    document.querySelector('body').classList.add("custom-text");
+  }
+
   if (isOvertime) {
-    document.querySelector('.timing').classList = "timing pulse";
+    document.querySelector('.timing').classList.add("pulse");
   }
 }
 
@@ -553,7 +567,7 @@ window.onload = function () {
   timerInterval = new IntervalTimer(displayTimespent, 1000);
   var style = document.createElement("style");
   style.type = "text/css";
-  style.innerHTML = "\n    .is-paused .timing {\n        border: 2px dashed orange; \n    }\n    .is-paused .time-description {\n        background: white;\n    }\n    .time-description {\n        flex: 1;\n        text-align: left;\n        padding: 0 2px;\n    }\n    @-webkit-keyframes pulse {\n        from {\n            -webkit-transform: scale3d(1, 1, 1);\n            transform: scale3d(1, 1, 1);\n        }\n        \n        50% {\n            -webkit-transform: scale3d(1.05, 1.05, 1.05);\n            transform: scale3d(1.05, 1.05, 1.05);\n        }\n        \n        to {\n            -webkit-transform: scale3d(1, 1, 1);\n            transform: scale3d(1, 1, 1);\n        }\n    }\n    \n    @keyframes pulse {\n        from {\n            -webkit-transform: scale3d(1, 1, 1);\n            transform: scale3d(1, 1, 1);\n        }\n        \n        50% {\n            -webkit-transform: scale3d(1.05, 1.05, 1.05);\n            transform: scale3d(1.05, 1.05, 1.05);\n        }\n        \n        to {\n            -webkit-transform: scale3d(1, 1, 1);\n            transform: scale3d(1, 1, 1);\n        }\n    }\n    \n    .pulse {\n    -webkit-animation-name: pulse;\n    animation-name: pulse;\n    animation-iteration-count: infinite;\n    -webkit-animation-duration: 3s;\n    animation-duration: 3s;\n    -webkit-animation-fill-mode: both;\n    animation-fill-mode: both;\n    border: 3px solid #84b2a6;\n\n    }";
+  style.innerHTML = "\n    .is-paused .timing {\n        border: 2px dashed orange; \n    }\n    .is-paused .time-description {\n        background: white;\n    }\n    .time-description {\n        flex: 1;\n        text-align: left;\n        padding: 0 2px;\n    }\n    .custom-text .timing-help-text {\n        display:none;\n    }\n    @-webkit-keyframes pulse {\n        from {\n            -webkit-transform: scale3d(1, 1, 1);\n            transform: scale3d(1, 1, 1);\n        }\n        \n        50% {\n            -webkit-transform: scale3d(1.05, 1.05, 1.05);\n            transform: scale3d(1.05, 1.05, 1.05);\n        }\n        \n        to {\n            -webkit-transform: scale3d(1, 1, 1);\n            transform: scale3d(1, 1, 1);\n        }\n    }\n    \n    @keyframes pulse {\n        from {\n            -webkit-transform: scale3d(1, 1, 1);\n            transform: scale3d(1, 1, 1);\n        }\n        \n        50% {\n            -webkit-transform: scale3d(1.05, 1.05, 1.05);\n            transform: scale3d(1.05, 1.05, 1.05);\n        }\n        \n        to {\n            -webkit-transform: scale3d(1, 1, 1);\n            transform: scale3d(1, 1, 1);\n        }\n    }\n    \n    .pulse {\n    -webkit-animation-name: pulse;\n    animation-name: pulse;\n    animation-iteration-count: infinite;\n    -webkit-animation-duration: 3s;\n    animation-duration: 3s;\n    -webkit-animation-fill-mode: both;\n    animation-fill-mode: both;\n    border: 3px solid #84b2a6;\n\n    }";
   document.head.append(style);
 };
 
