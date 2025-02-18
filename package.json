@@ -2,18 +2,13 @@
   "private": true,
   "scripts": {
     "test": "mocha src/test.js",
-    "dev": "npm run development",
-    "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
-    "watch": "npm run development -- --watch",
-    "watch-poll": "npm run watch -- --watch-poll",
-    "hot": "cross-env NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --config=node_modules/laravel-mix/setup/webpack.config.js",
-    "prod": "npm run production",
-    "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
+    "watch": "parcel watch",
+    "build": "parcel build"
   },
+  "source": "src/main.js",
+  "main": "dist/main.js",
   "devDependencies": {
-    "cross-env": "^5.2.0",
-    "laravel-mix": "^4.1.2",
-    "mocha": "^6.2.0",
-    "vue-template-compiler": "^2.6.10"
+    "mocha": "^11.1.0",
+    "parcel": "^2.13.3"
   }
 }

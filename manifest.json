@@ -1,8 +1,8 @@
 {
     "name": "Calculate Worktime",
-    "version": "1.1",
+    "version": "2.0.0",
     "description": "Determines how long you should work if you want",
-    "manifest_version": 2,
+    "manifest_version": 3,
     "permissions": ["activeTab"],
     "content_scripts": [{
         "matches": ["https://jazz.hs.coop.ch/mobile/*", "https://jazz.coop.ch/mobile/*", "https://jazz.hs.coop.ch/mobile/*", "https://jazz.coop.ch/mobile/#/stempel/start"],
