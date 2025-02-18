@@ -6,7 +6,7 @@ class IntervalTimer {
         this.state = 0;
         this.resume();
     }
-    
+
 
     pause() {
         if (this.state != 1) return;

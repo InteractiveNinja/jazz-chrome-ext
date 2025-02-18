@@ -1,6 +1,6 @@
-const Time = require('./Time')
-const TimeCalculator = require('./TimeCalculator')
-const IntervalTimer = require('./IntervalTimer')
+import TimeCalculator from "./TimeCalculator";
+import IntervalTimer from "./IntervalTimer";
+
 const MINIMUM_BREAKTIME = "0:30"
 const WORKDAY = "8:12"
 let timerInterval;
@@ -8,9 +8,9 @@ let timerInterval;
 
 function displayTime(time, description) {
     return `<span style="flex: 1; text-align: right; padding: 0 2px; font-size: 30px;">`
-    + time.toString()
-	+ "</span><span class='time-description'>"
-	+ description + "</span>";
+        + time.toString()
+        + "</span><span class='time-description'>"
+        + description + "</span>";
 }
 
 
@@ -18,19 +18,19 @@ function readTimes() {
     let timeElements = document.querySelectorAll(".today.stempel-day .time")
 
 
-	if(!timeElements.length) {
-		return false;
+    if (!timeElements.length) {
+        return false;
     }
 
     let times = [];
 
-    for(let i = 0; i < timeElements.length; i++) {
-        if(timeElements[i].textContent != '00:00') {
+    for (let i = 0; i < timeElements.length; i++) {
+        if (timeElements[i].textContent != '00:00') {
             times.push(timeElements[i].textContent);
         }
     }
 
-   
+
     let calculator = new TimeCalculator(MINIMUM_BREAKTIME, WORKDAY);
     return [
         {
@@ -44,7 +44,7 @@ function readTimes() {
             value: calculator.timeToGo(times)
         },
         {
-            text: localStorage.getItem("text-2") || "Go Time", 
+            text: localStorage.getItem("text-2") || "Go Time",
             default: "Go Time",
             value: calculator.goTime(times)
         }
@@ -52,18 +52,18 @@ function readTimes() {
 }
 
 function display(times) {
-	var wrapper = document.querySelector(".timing");
-	if(!wrapper) {
-		let row = document.createElement("DIV");
-		row.classList = "row";
-		wrapper = document.createElement("DIV");
-		wrapper.style ="margin: 0 -15px 15px; background: #f4f4f4; padding: 1rem 0;";
+    var wrapper = document.querySelector(".timing");
+    if (!wrapper) {
+        let row = document.createElement("DIV");
+        row.classList = "row";
+        wrapper = document.createElement("DIV");
+        wrapper.style = "margin: 0 -15px 15px; background: #f4f4f4; padding: 1rem 0;";
         wrapper.classList = "timing"
 
         let title = document.createElement("P");
-		title.classList = "text-uppercase";
-		title.style = "text-align: center; font-weight: bolder;";
-		title.appendChild(document.createTextNode("Time stats"))
+        title.classList = "text-uppercase";
+        title.style = "text-align: center; font-weight: bolder;";
+        title.appendChild(document.createTextNode("Time stats"))
 
         wrapper.appendChild(title);
 
@@ -76,23 +76,23 @@ function display(times) {
 
             window.addEventListener('keypress', (ev) => {
                 let key = ev.which || ev.keyCode;
-                if(key == 13) {
+                if (key == 13) {
                     body.classList.add("custom-text")
                     body.classList.remove("is-paused")
                     ev.preventDefault()
 
-                    for(let i = 0; i < descElements.length; i++) {
+                    for (let i = 0; i < descElements.length; i++) {
                         localStorage.setItem("text-" + i, descElements[i].innerHTML);
                         descElements[i].contentEditable = false;
                     }
-                    
+
                     timerInterval.resume()
                 }
             })
         };
-        
+
         let element;
-        for(let i = 0; i < times.length; i++) {
+        for (let i = 0; i < times.length; i++) {
             element = document.createElement("P");
             element.style = "display:flex; align-items: baseline;";
             element.classList = "time-" + i;
@@ -107,49 +107,48 @@ function display(times) {
 
         row.appendChild(wrapper);
 
-		document
-			.querySelector(".stempel-data")
-			.parentElement
-			.insertBefore(wrapper, document.querySelector(".stempel-data"));
+        document
+            .querySelector(".stempel-data")
+            .parentElement
+            .insertBefore(wrapper, document.querySelector(".stempel-data"));
     }
 
     let isOvertime = false;
     let hasCustomText = false;
-    
-    for(let i = 0; i < times.length; i++) {
-        if(times[i].value.isNegative) {
+
+    for (let i = 0; i < times.length; i++) {
+        if (times[i].value.isNegative) {
             isOvertime = true;
         }
-        if(localStorage.getItem("text-" + i) != null) {
+        if (localStorage.getItem("text-" + i) != null) {
             hasCustomText = true;
         }
         document.querySelector(".time-" + i).innerHTML = displayTime(times[i].value, times[i].text);
     }
 
-    if(hasCustomText) {
+    if (hasCustomText) {
         document.querySelector('body').classList.add("custom-text")
     }
-    
-    if(isOvertime) {
+
+    if (isOvertime) {
         document.querySelector('.timing').classList.add("pulse");
     }
 }
 
-let displayTimespent = function() {
-	let times = readTimes();
-	if(!times) {
-		return false;
-	}
-	
+let displayTimespent = function () {
+    let times = readTimes();
+    if (!times) {
+        return false;
+    }
+
     display(times);
 
 }
 
 
-
-window.onload = function() {
+window.onload = function () {
     timerInterval = new IntervalTimer(displayTimespent, 1000)
-    
+
     let style = document.createElement("style");
     style.type = "text/css";
     style.innerHTML = `
