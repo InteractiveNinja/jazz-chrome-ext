@@ -1,9 +1,12 @@
-import Time from "./Time";
+import {Time} from "./Time";
 
 class TimeCalculator {
-    constructor(minimumBreak, minimumWorkday) {
-        this.minimumBreak = Time.fromString(minimumBreak);
-        this.minimumWorkday = Time.fromString(minimumWorkday);
+    private minimumBreak: Time;
+    private minimumWorkday: Time;
+
+    constructor(readonly _minimumBreak: string, readonly _minimumWorkday: string) {
+        this.minimumBreak = Time.fromString(_minimumBreak);
+        this.minimumWorkday = Time.fromString(_minimumWorkday);
     }
 
     breaks(checkpoints, isSorted = false) {

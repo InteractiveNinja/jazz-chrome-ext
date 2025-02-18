@@ -1,5 +1,5 @@
 import TimeCalculator from "./TimeCalculator";
-import IntervalTimer from "./IntervalTimer";
+import {IntervalTimer} from "./IntervalTimer";
 
 const MINIMUM_BREAKTIME = "0:30"
 const WORKDAY = "8:12"

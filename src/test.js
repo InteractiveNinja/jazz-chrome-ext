@@ -1,8 +1,8 @@
+import {Time} from "./Time";
+
+import TimeCalcuator from "./TimeCalculator";
+
 const assert = require('assert')
-
-const Time = require('./Time')
-const TimeCalcuator = require('./TimeCalculator')
-
 it('should parse the time correctly from string', () => {
     let t = Time.fromString("18:12")
 
