@@ -5,7 +5,7 @@
     "manifest_version": 3,
     "permissions": ["activeTab"],
     "content_scripts": [{
-        "matches": ["https://jazz.hs.coop.ch/mobile/*", "https://jazz.coop.ch/mobile/*", "https://jazz.hs.coop.ch/client/mobile/*"],
+        "matches": ["https://jazz.hs.coop.ch/client/mobile/#/stempel/start"],
         "js": ["/dist/main.js"]
     }],
     "browser_specific_settings": {
