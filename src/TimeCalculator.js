@@ -1,4 +1,4 @@
-import Time from "./Time";
+import Time from "./Time.js";
 
 class TimeCalculator {
     constructor(minimumBreak, minimumWorkday) {
@@ -85,4 +85,4 @@ class TimeCalculator {
     }
 }
 
-module.exports = TimeCalculator
+export default TimeCalculator

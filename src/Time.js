@@ -24,7 +24,7 @@ class Time {
         let minutes = time.trim().split(":")[1];
         let isNegative = hours[0] == '-';
 
-        return new Time(isNegative ? hours.subStr(1) : hours, minutes, isNegative);
+        return new Time(isNegative ? hours.substring(1) : hours, minutes, isNegative);
     }
 
     static fromTotalMinutes(totalMinutes) {

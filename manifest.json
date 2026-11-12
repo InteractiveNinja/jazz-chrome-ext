@@ -7,5 +7,11 @@
     "content_scripts": [{
         "matches": ["https://jazz.hs.coop.ch/mobile/*", "https://jazz.coop.ch/mobile/*", "https://jazz.hs.coop.ch/client/mobile/*"],
         "js": ["/dist/main.js"]
-    }]
+    }],
+    "browser_specific_settings": {
+        "firefox": {
+            "id": "calculate-worktime@jazz-ext",
+            "strict_min_version": "109.0"
+        }
+    }
 }
